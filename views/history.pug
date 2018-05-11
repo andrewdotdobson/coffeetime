@@ -1,0 +1,18 @@
+doctype html
+html(lang="en")
+  include includes/document_head.pug
+  body
+    h1 Coffee Buying History
+    #container.col
+      p.
+        Here is the history of our Coffee
+      
+      each entry in results
+        p= 'On ' + entry.timeStamp
+        p= 'The coffee was bought by ' + entry.whoBoughtIt
+        p= 'Total Coffees for Oonagh:' + entry.totalO
+        p= 'Total Coffees for Tarns:' + entry.totalT
+        p= 'Total Coffees to date:' + entry.totalCoffees
+        hr
+      
+

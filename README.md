@@ -37,3 +37,7 @@ To connect using the mongo shell:
 To connect using a driver via the standard MongoDB URI (what's this?):
 
 ```mongodb://<dbuser>:<dbpassword>@ds119070.mlab.com:19070/add-coffeetime```
+
+
+	username: add-coffeetime-app
+	pass: cawffe33_T1fE

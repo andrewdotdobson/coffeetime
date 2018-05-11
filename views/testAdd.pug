@@ -1,0 +1,14 @@
+doctype html
+html(lang="en")
+  include include includes/document_head.pug
+  body
+    h1 Add an Entry
+    #container.col
+      p.
+        Demonstration for testing a collection addition.
+      form(action='/postACoffee', method='post')
+        button(type='submit', onclick='') Click Me!
+    #container.col
+      p.
+        Here's the history
+      a(href='/history') Go to history
