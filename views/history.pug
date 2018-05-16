@@ -1,18 +1,21 @@
 doctype html
 html(lang="en")
-  include includes/document_head.pug
-  body
-    h1 Coffee Buying History
-    #container.col
-      p.
-        Here is the history of our Coffee
-      
-      each entry in results
-        p= 'On ' + entry.timeStamp
-        p= 'The coffee was bought by ' + entry.whoBoughtIt
-        p= 'Total Coffees for Oonagh:' + entry.totalO
-        p= 'Total Coffees for Tarns:' + entry.totalT
-        p= 'Total Coffees to date:' + entry.totalCoffees
-        hr
-      
+include includes/document_head.pug
+body.blue
+  include includes/header.pug
+  .container.toppad
+    h2.pacif.white-text Who bought it?
+    
 
+    each entry in results
+      - us = users[entry.userID]
+      .historyBlock
+        h6.white-text= entry.timeStamp
+        h3.pacif.white-text= us
+        // .row
+          .col.s6.center-align.white-text.pacif
+            |Oonagh: 25
+          .col.s6.center-align.white-text.pacif
+            |Tarns: 23
+
+  include includes/document_foot.pug

@@ -1,25 +1,27 @@
 doctype html
 html(lang="en")
-  include includes/document_head.pug
-  body
+include includes/document_head.pug
+body.red.darken-4
   include includes/header.pug
-  h2 Whose turn is it?
+  .container.toppad
+   
+    h2.pacif.white-text.center-align Whose turn is it?
+    .center-align
+      - imgSource = 'images/' + whoPaysToday +'.png'
+      img.circle(src=imgSource)
+    h3.pacif.white-text.center-align #{whoPaysToday}
+    .center-align
+      form(action='/postACoffee', method='post')
+        input(type='hidden' name='whichPerson' value=whoPaysToday)
+        button.waves-effect.waves-light.btn-large(type='submit', onclick='') Buy that coffee #{whoPaysToday}!
+    .center-align.toppad
+      form(action='/postACoffee', method='post')
+        input(type='hidden' name='whichPerson' value='skip')
+        button.waves-effect.waves-light.btn-small(type='submit', onclick='') Skip your turn!
 
-  #container.col
-    p.
-      Next Coffee will be bought by #{whoPaysToday}
-    form(action='/postACoffee', method='post')
-      input(type='hidden' name='whichPerson' value=whoPaysToday)
-      button(type='submit', onclick='') Buy that coffee #{whoPaysToday}!
+    // p Oonagh has bought: #{results.totalO} coffees
+    // p Tarns has bought: #{results.totalT} coffees
+    // p In total there have been #{results.totalCoffees} coffees bought
+  
 
-    form(action='/postACoffee', method='post')
-      input(type='hidden' name='whichPerson' value='skip')
-      button(type='submit', onclick='') Skip your turn!
-  #container.col
-    p Oonagh has bought: #{results.totalO} coffees
-    p Tarns has bought: #{results.totalT} coffees
-    p In total there have been #{results.totalCoffees} coffees bought
-  #container.col
-    p.
-      Here's the history
-    a(href='/history') Go to history
+  include includes/document_foot.pug

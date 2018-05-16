@@ -6,14 +6,10 @@ app.set('view engine', 'pug')
 app.use(express.static('public'))
 
 var users = ["Oonagh", "Tarns"]
-var whoPaysToday = users[0]
-var totalO = 1
-var totalT = 1
-var totalCoffees = totalO + totalT
-
 var lastItem
-var userIndex = 0
-var nextCoffeeBy = 'Oonagh'
+var userIndex
+var collectionSize
+var isSkipped = false
 
 var moment = require('moment');
 
@@ -27,44 +23,50 @@ MongoClient.connect('mongodb://add-coffeetime-app:cawffe33_T1fE@ds119070.mlab.co
 	startServing();
 })
 
-
 app.use(bodyParser.urlencoded({extended: true}))
 
 // GET routes
 
 app.get('/', (req, res) => {
-	
-	var cursor = db.collection('coffeehistory').find().limit(1).sort({$natural:-1}).toArray(function(err, results) {
-		if(results.length>0){
-			lastItem = results[0]
-			// now we have the lastitem object matching the last entry into the DB.  Let's do something with it.
+	console.log('//////////////////////////////')
 
-			if(lastItem.whoBoughtIt == users[0])
-			{
-				whoPaysToday = users[1]
-			} else {
-				whoPaysToday = users[0]
+	var cursor = db.collection('coffeehistory').find().toArray(function(err,results) {
+//	var cursor = db.collection('coffeehistory').find().limit(1).sort({$natural:-1}).toArray(function(err, results) {
+//	var cursor = db.collection('coffeehistory').find({}).sort({'key': -1}).limit(1).toArray(function(err,results) {
+		collectionSize = results.length;
+		
+		if(collectionSize>0){
+			lastItem = results[results.length-1]
+			userIndex = lastItem.userID
+			//console.log("the last db item userID was "+userIndex)
+			//console.log("taken at " + lastItem.timeStamp)
+			//console.log("total size of collection is "+collectionSize)
+			incrementUserIndex()
+			if(isSkipped){
+				incrementUserIndex()
+				isSkipped = false
 			}
-			console.log(whoPaysToday)
-			res.render('index', {results: lastItem, whoPaysToday: whoPaysToday})
-		} else {
-			db.collection('coffeehistory').save(
-			{
-				timeStamp: moment().format('MMMM Do YYYY, h:mm:ss a'),
-				whoBoughtIt: whoPaysToday,
-				totalO: 0,
-				totalT: 0,
-				totalCoffees: 0
-			}, (err, result) => {
-			if (err) return console.log(err)
-			res.redirect('/')
-		})
+			res.render('index', {whoPaysToday: users[userIndex]})
+			
+			} else {
+				db.collection('coffeehistory').save(
+				{
+					timeStamp: moment().format('MMMM Do YYYY, h:mm:ss a'),
+					userID: 0,
+					totalO: 0,
+					totalT: 0,
+					totalCoffees: 0
+				}, (err, result) => {
+				if (err) return console.log(err)
+				res.redirect('/')
+			})
 		}
 	})
 /*
 	var lastItem = db.collection('quotes').find().limit(1).sort({$natural:-1}).toArray(function(err, results) {
 		
-		
+		08082343325
+		9026664
 		res.render('index', {title: 'Coffeetime', message: results[0].name})
 	})
 */	
@@ -77,8 +79,11 @@ app.get('/', (req, res) => {
 
 app.get('/history', (req,res) => {
 
-	var cursor = db.collection('coffeehistory').find().toArray(function(err,results) {
-		res.render('history.pug', {results: results})
+	var cursor = db.collection('coffeehistory').find().sort( { _id: -1 } ).toArray(function(err,results) {
+
+		console.log(results)
+
+		res.render('history.pug', {results: results, users: users})
 	})
 })
 
@@ -87,32 +92,28 @@ app.get('/history', (req,res) => {
 // POST routes
 
 app.post('/postACoffee', (req, res) => {
-	console.log(req.body)
 
-	if(req.body != 'skip')
+	console.log(req.body)
+	if(req.body.whichPerson == 'skip')
 	{
-		postACoffee(req,res)
-	} else {
-		incrementUserIndex()
+		console.log("we've skipped a user")
+		isSkipped = true
 		res.redirect('/')
+	} else {
+		postACoffee(req,res)	
 	}
 })
 
 
 function postACoffee(req,res) {
 
-	lastItem.timeStamp = moment().format('MMMM Do YYYY, h:mm:ss a')
-	lastItem.whoBoughtIt = whoPaysToday
-	if(whoPaysToday == "Oonagh")
-	{
-		lastItem.totalO ++
-	} else {
-		lastItem.totalT ++
-	}
-	lastItem.totalCoffees++
-	delete lastItem._id;
+	var newEntry = {}
+	newEntry.timeStamp = moment().format('MMMM Do YYYY, h:mm:ss a')
+	newEntry.userID = userIndex
+	//newEntry.totalCoffees = lastItem.totalCoffees++
+	
 	db.collection('coffeehistory').save(
-		lastItem, (err, result) => {
+		newEntry, (err, result) => {
 			if (err) return console.log(err)
 			res.redirect('/')
 		})
@@ -121,7 +122,13 @@ function postACoffee(req,res) {
 
 function incrementUserIndex()
 {
-	console.log('next user')
+	console.log("increment userIndex from " + userIndex)
+	userIndex++
+	if(userIndex>=users.length)
+	{
+		userIndex = 0
+	}
+	//console.log('next user: '+ userIndex + ' of ' + users.length + ' username ' + users[userIndex])
 }
 function startServing(){
 
