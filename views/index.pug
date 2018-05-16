@@ -7,7 +7,7 @@ body.red.darken-4
    
     h2.pacif.white-text.center-align Whose turn is it?
     .center-align
-      - imgSource = 'images/' + whoPaysToday +'.png'
+      - imgSource = 'images/' + whoPaysToday.toLowerCase() +'.png'
       img.circle(src=imgSource)
     h3.pacif.white-text.center-align #{whoPaysToday}
     .center-align
