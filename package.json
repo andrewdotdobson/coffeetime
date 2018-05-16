@@ -18,6 +18,9 @@
     "url": "https://github.com/andrewdotdobson/coffeetime/issues"
   },
   "homepage": "https://github.com/andrewdotdobson/coffeetime#readme",
+  "engines": {
+    "node": "6.9.1"
+  },
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
