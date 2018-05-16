@@ -130,9 +130,9 @@ function incrementUserIndex()
 	}
 	//console.log('next user: '+ userIndex + ' of ' + users.length + ' username ' + users[userIndex])
 }
-function startServing(){
 
-	app.listen(3000, function() {
+function startServing(){
+	app.listen(process.env.PORT || 3000, function() {
 	  console.log('listening on 3000 and base directory is ' + __dirname)
 	})
 }
