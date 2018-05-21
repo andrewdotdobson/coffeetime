@@ -119,6 +119,7 @@ function postACoffee(req,res) {
 		})
 
 }
+//db.coffeehistory.remove({})
 
 function incrementUserIndex()
 {
